@@ -1,41 +1,54 @@
 import { $ } from '@wdio/globals'
-import Page from './page.js';
+import Page from './page.js'
 
-/**
- * sub page containing specific selectors and methods for a specific page
- */
 class LoginPage extends Page {
-    /**
-     * define selectors using getter methods
-     */
-    get inputUsername () {
-        return $('#username');
+    open(path) {
+        return super.open('login')
     }
 
-    get inputPassword () {
-        return $('#password');
+    get inputEmail() {
+        return $("//input[@id= 'email']")
     }
 
-    get btnSubmit () {
-        return $('button[type="submit"]');
+    get inputPassword() {
+        return $("//input[@id= 'password']")
     }
 
-    /**
-     * a method to encapsule automation code to interact with the page
-     * e.g. to login using username and password
-     */
-    async login (username, password) {
-        await this.inputUsername.setValue(username);
-        await this.inputPassword.setValue(password);
-        await this.btnSubmit.click();
+    get loginButton() {
+        return $("//button[@type= 'submit'][text()='login']")
     }
 
-    /**
-     * overwrite specific options to adapt it to page object
-     */
-    open () {
-        return super.open('login');
+    get linkRegister() {
+        return $("//a[contains(text(), 'daftar')]")
+    }
+
+    async login(email, password) {
+        await this.inputEmail.setValue(email)
+        await this.inputPassword.setValue(password)
+
+        const loginButtonValue = await this.loginButton.getValue()
+        console.log(
+            '🚀 ~ LoginPage ~ login ~ loginButtonValue:',
+            loginButtonValue,
+        )
+
+        await this.loginButton.click()
+    }
+
+    async clickRegister() {
+        await this.linkRegister.waitForDisplayed({ timeout: 3000 })
+        const linkRegisterText = await this.linkRegister.getText()
+        console.log(
+            '🚀 ~ LoginPage ~ clickRegister ~ textRegister:',
+            linkRegisterText,
+        )
+        await this.linkRegister.click()
+    }
+
+    async validateOnLoginPage() {
+        const currentUrl = await browser.getUrl()
+        console.log('🚀  ~ currentUrl:', currentUrl)
+        expect(currentUrl[0]).toContain('login')
     }
 }
-
-export default new LoginPage();
+export default new LoginPage()

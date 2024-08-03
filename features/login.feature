@@ -1,12 +1,14 @@
-Feature: The Internet Guinea Pig Website
+@login
+Feature: login
 
-  Scenario Outline: As a user, I can log into the secure area
+  Background:
+    Given user already on login page
 
-    Given I am on the login page
-    When I login with <username> and <password>
-    Then I should see a flash message saying <message>
+  @positive
+  Scenario: Successful login
+    When user input valid login credentials with email "<email>" and password "<password>"
+    Then user is successfully logged in and redirected to the dashboard page
 
     Examples:
-      | username | password             | message                        |
-      | tomsmith | SuperSecretPassword! | You logged into a secure area! |
-      | foobar   | barfoo               | Your username is invalid!      |
+      | email                | password |
+      | dummyuser00@mail.com | password |
