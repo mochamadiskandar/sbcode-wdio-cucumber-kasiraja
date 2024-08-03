@@ -1,3 +1,15 @@
+import fs from 'fs'
+import path from 'path'
+
+import dayjs from 'dayjs'
+import { v4 } from 'uuid'
+import { ReportAggregator } from 'wdio-html-nice-reporter'
+
+// define helper variable
+const globalTimestamp = dayjs().format('YYYYMMDD_HHmm')
+let featureName
+let reportAggregator
+
 export const config = {
     //
     // ====================
@@ -20,9 +32,7 @@ export const config = {
     // The path of the spec files will be resolved relative from the directory of
     // of the config file unless it's absolute.
     //
-    specs: [
-        './features/**/*.feature'
-    ],
+    specs: ['./features/**/*.feature'],
     // Patterns to exclude.
     exclude: [
         // 'path/to/excluded/files'
@@ -43,15 +53,26 @@ export const config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: 5,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    capabilities: [{
-        browserName: 'chrome'
-    }],
+    capabilities: [
+        {
+            myChromeBrowser: {
+                capabilities: {
+                    browserName: 'chrome',
+                },
+            },
+            // myFirefoxBrowser: {
+            //     capabilities: {
+            //         browserName: 'firefox',
+            //     },
+            // },
+        },
+    ],
 
     //
     // ===================
@@ -109,7 +130,7 @@ export const config = {
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
     framework: 'cucumber',
-    
+
     //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
@@ -123,12 +144,28 @@ export const config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec','cucumberjs-json'],
+    reporters: [
+        'spec',
+        'cucumberjs-json',
+        [
+            'html-nice',
+            {
+                outputDir: `./reports/html/html-reports-${globalTimestamp}`,
+                filename: `report-feature.html`,
+                reportTitle: `Report Feature`,
+                browserName: 'Chrome',
+                linkScreenshots: false,
+                showInBrowser: false,
+                collapseTests: false,
+                useOnAfterCommandForScreenshot: false,
+            },
+        ],
+    ],
 
     // If you are using Cucumber you need to specify the location of your step definitions.
     cucumberOpts: {
         // <string[]> (file/dir) require files before executing features
-        require: ['./features/step-definitions/steps.js'],
+        require: ['./features/step-definitions/*.js'],
         // <boolean> show full backtrace for errors
         backtrace: false,
         // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
@@ -150,9 +187,8 @@ export const config = {
         // <number> timeout for step definitions
         timeout: 60000,
         // <boolean> Enable this config to treat undefined definitions as warnings.
-        ignoreUndefinedDefinitions: false
+        ignoreUndefinedDefinitions: false,
     },
-
 
     //
     // =====
@@ -167,8 +203,16 @@ export const config = {
      * @param {object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
-    // onPrepare: function (config, capabilities) {
-    // },
+    onPrepare: function (config, capabilities) {
+        reportAggregator = new ReportAggregator({
+            outputDir: `./reports/html/html-reports-${globalTimestamp}`,
+            filename: 'master-report.html',
+            reportTitle: 'Master Report',
+            browserName: 'Chrome',
+            collapseTests: true,
+        })
+        reportAggregator.clean()
+    },
     /**
      * Gets executed before a worker process is spawned and can be used to initialize specific service
      * for that worker as well as modify runtime environments in an async fashion.
@@ -222,8 +266,10 @@ export const config = {
      * @param {string}                   uri      path to feature file
      * @param {GherkinDocument.IFeature} feature  Cucumber feature object
      */
-    // beforeFeature: function (uri, feature) {
-    // },
+    beforeFeature: async function (uri, feature) {
+        featureName = feature.name
+        console.log('🚀 ~ featureName:', featureName)
+    },
     /**
      *
      * Runs before a Cucumber Scenario.
@@ -264,8 +310,21 @@ export const config = {
      * @param {number}                 result.duration  duration of scenario in milliseconds
      * @param {object}                 context          Cucumber World object
      */
-    // afterScenario: function (world, result, context) {
-    // },
+    afterScenario: async function (world, result, context) {
+        if (!result.passed) {
+            const dir = `./reports/screenshot/failed-test-${globalTimestamp}`
+
+            const fileName = `capture-${globalTimestamp}.png`
+
+            // create new folder if not exist
+            if (!fs.existsSync(dir)) {
+                await fs.mkdirSync(dir, { recursive: true })
+            }
+
+            // save screenshot
+            await browser.saveScreenshot(`${dir}/${fileName}`)
+        }
+    },
     /**
      *
      * Runs after a Cucumber Feature.
@@ -274,7 +333,7 @@ export const config = {
      */
     // afterFeature: function (uri, feature) {
     // },
-    
+
     /**
      * Runs after a WebdriverIO command gets executed
      * @param {string} commandName hook command name
@@ -309,25 +368,29 @@ export const config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-    // onComplete: function(exitCode, config, capabilities, results) {
-    // },
+    onComplete: function (exitCode, config, capabilities, results) {
+        ;(async () => {
+            await reportAggregator.createReport()
+        })()
+    },
+
     /**
-    * Gets executed when a refresh happens.
-    * @param {string} oldSessionId session ID of the old session
-    * @param {string} newSessionId session ID of the new session
-    */
+     * Gets executed when a refresh happens.
+     * @param {string} oldSessionId session ID of the old session
+     * @param {string} newSessionId session ID of the new session
+     */
     // onReload: function(oldSessionId, newSessionId) {
     // }
     /**
-    * Hook that gets executed before a WebdriverIO assertion happens.
-    * @param {object} params information about the assertion to be executed
-    */
+     * Hook that gets executed before a WebdriverIO assertion happens.
+     * @param {object} params information about the assertion to be executed
+     */
     // beforeAssertion: function(params) {
     // }
     /**
-    * Hook that gets executed after a WebdriverIO assertion happened.
-    * @param {object} params information about the assertion that was executed, including its results
-    */
+     * Hook that gets executed after a WebdriverIO assertion happened.
+     * @param {object} params information about the assertion that was executed, including its results
+     */
     // afterAssertion: function(params) {
     // }
 }
