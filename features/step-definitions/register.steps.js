@@ -21,5 +21,6 @@ When(
 Then('user should be registered successfully', async () => {
     await RegisterPage.validateRegisterSuccess()
     await LoginPage.validateOnLoginPage()
-    // await browser.debug(3000)
+    // await browser.debug()
+    // await browser.pause(3000)
 })

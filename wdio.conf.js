@@ -32,7 +32,11 @@ export const config = {
     // The path of the spec files will be resolved relative from the directory of
     // of the config file unless it's absolute.
     //
-    specs: ['./features/**/*.feature'],
+    specs: [
+        // './features/register.feature', // agar eksekusi duluan
+        // './features/login.feature',
+        './features/**/*.feature',
+    ],
     // Patterns to exclude.
     exclude: [
         // 'path/to/excluded/files'
@@ -53,7 +57,7 @@ export const config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 5,
+    maxInstances: 1,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -150,7 +154,8 @@ export const config = {
         [
             'html-nice',
             {
-                outputDir: `./reports/html/html-reports-${globalTimestamp}`,
+                // outputDir: `./reports/html/html-reports-${globalTimestamp}`, // split folder report with unique timestamp
+                outputDir: `./reports/html/html-reports`, // always generate one folder report (simplify)
                 filename: `report-feature.html`,
                 reportTitle: `Report Feature`,
                 browserName: 'Chrome',
@@ -205,7 +210,7 @@ export const config = {
      */
     onPrepare: function (config, capabilities) {
         reportAggregator = new ReportAggregator({
-            outputDir: `./reports/html/html-reports-${globalTimestamp}`,
+            outputDir: `./reports/html/html-reports`,
             filename: 'master-report.html',
             reportTitle: 'Master Report',
             browserName: 'Chrome',

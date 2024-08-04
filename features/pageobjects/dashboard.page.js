@@ -11,7 +11,6 @@ class DashboardPage extends Page {
     }
 
     async validateOnDashboardPage() {
-        await this.titleDashboard.waitForDisplayed({ timeout: 5000 })
         await expect(await this.titleDashboard.isDisplayed())
     }
 }
