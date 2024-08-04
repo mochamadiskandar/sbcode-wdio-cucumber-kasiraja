@@ -22,6 +22,10 @@ class LoginPage extends Page {
         return $("//a[contains(text(), 'daftar')]")
     }
 
+    get errorLoginMessage() {
+        return $("//div[@role='alert']")
+    }
+
     async login(email, password) {
         await this.inputEmail.setValue(email)
         await this.inputPassword.setValue(password)
@@ -49,6 +53,13 @@ class LoginPage extends Page {
         const currentUrl = await browser.getUrl()
         console.log('🚀  ~ currentUrl:', currentUrl)
         expect(currentUrl[0]).toContain('login')
+    }
+
+    async validateErrorPopupMessage(expectedMessage) {
+        await this.errorLoginMessage.waitForDisplayed({ timeout: 5000 })
+        const popupErrorText = await this.errorLoginMessage.getText()
+        console.log('🚀 ~ popupErrorLoginText:', popupErrorText)
+        await expect(popupErrorText[0]).toBe(expectedMessage)
     }
 }
 export default new LoginPage()

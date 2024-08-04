@@ -7,8 +7,15 @@ Given('user already on login page', async () => {
     await LoginPage.open()
 })
 
+// When(
+//     'user input login credentials with email {string} and password {string}',
+//     async (email, password) => {
+//         await LoginPage.login(email, password)
+//     },
+// )
+
 When(
-    'user input valid login credentials with email {string} and password {string}',
+    /^user input login credentials with email "([^"]*)" and password "([^"]*)"$/,
     async (email, password) => {
         await LoginPage.login(email, password)
     },
@@ -18,6 +25,15 @@ Then(
     'user is successfully logged in and redirected to the dashboard page',
     async () => {
         await DashboardPage.validateOnDashboardPage()
-        // await browser.debug(3000)
+        // await browser.debug()
+        // await browser.pause(3000)
+    },
+)
+
+Then(
+    `user sees a popup with the error message "Kredensial yang Anda berikan salah"`,
+    async () => {
+        const errorMessage = 'Kredensial yang Anda berikan salah'
+        await LoginPage.validateErrorPopupMessage(errorMessage)
     },
 )
