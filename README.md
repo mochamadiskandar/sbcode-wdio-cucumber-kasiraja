@@ -1,12 +1,14 @@
 # Web Automation KASIR AJA
 
+Create Web Automation untuk [KasirAja](https://kasirdemo.vercel.app/login) menggunakan WebDriver.io & Cucumber.
+
 ## Tech stack
 
 - [WebDriver.io](https://webdriver.io/docs/gettingstarted)
 - [Cucumber](https://webdriver.io/docs/frameworks/#using-cucumber)
 - [HTML Nice Reports](https://www.npmjs.com/package/wdio-html-nice-reporter)
 
-## How to Run?
+## Install library
 
 - install seluruh library yang dibutuhkan :
 
@@ -14,23 +16,45 @@
     npm install
   ```
 
-- Run test case dengan comand :
+## How to run ?
+
+- Run **"All Feature and Test Case"** dengan comand :
 
   ```bash
-  npm run wdio-cu-login
+  npm run wdio
   ```
 
-- Jika ingin menjalankan spesific test case berdasarkan **CUCUMBER TAG** juga sudah sudah saya sediakan pada file **package.json**
+- Run **"only specific feature"** dengan comand :
+
+  ```bash
+  npm run wdio-login
+  ```
+
+  ```bash
+  npm run wdio-register
+  ```
+
+- Run **"only specific scenario"** dengan comand :
+
+  ```bash
+  npm run wdio-negative
+  ```
+
+**Untuk detail script lainnya dapat dilihat pada file **package.json***
 
 ## Reporting
 
-- Untuk **Reports** secara menyeluruh akan tersimpan pada direktori **./reports/html/**, tentunya tiap reports memiliki unique ID masing-masing.
-
-- Setiap menemukan hasil failed ketika menjalankan sebuah **Test Case**, maka akan otomatis tercapture dan di simpan pada direktori **./reports/screenshot/** dengan naming file berdasarkan timestamp.
+- Reports secara menyeluruh akan tersimpan pada direktori **./reports/html/html-reports**
+  
+- Di dalam direktori tersebut terdapat :
+  - File HTML report untuk masing-masing feature.
+  - Satu file HTML **Master Report** yang merupakan gabungan dari seluruh feature.
+  
+- Setiap kali ditemukan hasil failed saat menjalankan sebuah Test Case, akan otomatis tercapture dan disimpan pada direktori **./reports/screenshot/** dengan nama file berdasarkan timestamp.
 
 Berikut spesifik direktorinya :
 
 ```text
-  html report : "/reports/html/" --> open file.html pada browser
-  screenshot  : "/reports/screenshot/"
+  html-reports  : "/reports/html/html-reports" --> open file.html pada browser
+  screenshot    : "/reports/screenshot/"
 ```
