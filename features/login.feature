@@ -16,10 +16,10 @@ Feature: login
       | dummyuser06@mail.com | password |
 
   @negative
-  Scenario: Unsuccessful login with invalid credentials
+  Scenario: Failed login with invalid credentials
     When user input login credentials with email "<invalidEmail>" and password "<invalidPassword>"
-    Then user sees a popup with the error message "Kredensial yang Anda berikan salah"
+    Then user sees a popup with the error message "<popupMessage>"
 
     Examples:
-      | invalidEmail        | invalidPassword |
-      | loremipsum@mail.com | dolorsitamet    |
+      | invalidEmail        | invalidPassword | popupMessage                       |
+      | loremipsum@mail.com | dolorsitamet    | Kredensial yang Anda berikan salah |

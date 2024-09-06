@@ -329,6 +329,8 @@ export const config = {
             // save screenshot
             await browser.saveScreenshot(`${dir}/${fileName}`)
         }
+
+        await browser.reloadSession()
     },
     /**
      *

@@ -30,10 +30,7 @@ Then(
     },
 )
 
-Then(
-    `user sees a popup with the error message "Kredensial yang Anda berikan salah"`,
-    async () => {
-        const errorMessage = 'Kredensial yang Anda berikan salah'
-        await LoginPage.validateErrorPopupMessage(errorMessage)
-    },
-)
+Then('user sees a popup with the error message {string}', async (message) => {
+    // const errorMessage = 'Kredensial yang Anda berikan salah'
+    await LoginPage.validateErrorPopupMessage(message)
+})
