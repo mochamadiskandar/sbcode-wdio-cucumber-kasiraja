@@ -14,4 +14,4 @@ Feature: Register Feature
 
     Examples:
       | storeName   | email                | password |
-      | dummyuser20 | dummyuser20@mail.com | password |
+      | dummyuser30 | dummyuser20@mail.com | password |

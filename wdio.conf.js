@@ -63,18 +63,25 @@ export const config = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
+
+    // capabilities: [
+    //     {
+    //         myChromeBrowser: {
+    //             capabilities: {
+    //                 browserName: 'chrome',
+    //             },
+    //         },
+    // myFirefoxBrowser: {
+    //     capabilities: {
+    //         browserName: 'firefox',
+    //     },
+    // },
+    //     },
+    // ],
+
     capabilities: [
         {
-            myChromeBrowser: {
-                capabilities: {
-                    browserName: 'chrome',
-                },
-            },
-            // myFirefoxBrowser: {
-            //     capabilities: {
-            //         browserName: 'firefox',
-            //     },
-            // },
+            browserName: 'chrome',
         },
     ],
 
@@ -213,7 +220,7 @@ export const config = {
             outputDir: `./reports/html/html-reports`,
             filename: 'master-report.html',
             reportTitle: 'Master Report',
-            browserName: 'Chrome',
+            browserName: capabilities.browserName,
             collapseTests: true,
         })
         reportAggregator.clean()
